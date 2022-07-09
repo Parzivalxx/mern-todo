@@ -1,16 +1,28 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
+const port = 3001;
 
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://127.0.0.1:27017/react-todo', {
+mongoose.connect("mongodb+srv://lloyd051099:lloyd051099@cluster0.sjggsna.mongodb.net/database?retryWrites=true&w=majority", {
 	useNewUrlParser: true, 
 	useUnifiedTopology: true 
-}).then(() => console.log("Connected to MongoDB")).catch(console.error);
+});
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function () {
+    console.log("Connected successfully");
+});
+
+// Configuring body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Models
 const Todo = require('./models/Todo');
@@ -57,4 +69,4 @@ app.put('/todo/update/:id', async (req, res) => {
 	res.json(todo);
 });
 
-app.listen(3001);
+app.listen(port, () => console.log("Todo list app listening on port ${port}!"))
