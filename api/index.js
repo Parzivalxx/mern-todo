@@ -4,9 +4,10 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3001;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
 app.use(cors());
 
 mongoose.connect("mongodb+srv://lloyd051099:lloyd051099@cluster0.sjggsna.mongodb.net/database?retryWrites=true&w=majority", {
@@ -25,7 +26,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Models
-const Todo = require('./models/Todo');
+const Todo = require('./models');
+
+app.get('/', (req, res, next) => {
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            name: 'MERN-todo',
+            version: '0.1.0'
+        }
+    });
+
+});
 
 app.get('/todos', async (req, res) => {
 	const todos = await Todo.find();
@@ -69,4 +82,4 @@ app.put('/todo/update/:id', async (req, res) => {
 	res.json(todo);
 });
 
-app.listen(port, () => console.log("Todo list app listening on port ${port}!"))
+app.listen(PORT, () => console.log(`Todo list app listening on port ${PORT}!`))
